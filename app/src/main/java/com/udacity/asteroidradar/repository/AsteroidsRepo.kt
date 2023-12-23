@@ -11,20 +11,21 @@ import com.udacity.asteroidradar.api.asDatabaseModel
 import com.udacity.asteroidradar.api.asDomainModel
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidsDatabase
+import com.udacity.asteroidradar.utils.getNextWeek
+import com.udacity.asteroidradar.utils.getToday
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
 
 
 class AsteroidsRepo(private val database: AsteroidsDatabase) {
-
-
-    val today = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
-    val nextWeek = LocalDateTime.now().plusWeeks(1).format(DateTimeFormatter.ISO_DATE)
 
     val asteroids :LiveData<List<Asteroid>> =
         Transformations.map(database.asteroidDao.getAsteroid()){
@@ -32,22 +33,19 @@ class AsteroidsRepo(private val database: AsteroidsDatabase) {
         }
 
     val asteroidsToday :LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAsteroidToday(today)){
+        Transformations.map(database.asteroidDao.getAsteroidToday(getToday())){
             it.asDomainModel()
         }
 
     val asteroidsWeek :LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAsteroidWeek(today,nextWeek)){
+        Transformations.map(database.asteroidDao.getAsteroidWeek(getToday(), getNextWeek())){
             it.asDomainModel()
         }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     suspend fun refreshAsteroids(){
         withContext(Dispatchers.IO){
-
-            Timber.i("today: ${today}")
-            Timber.i("next week: ${nextWeek}")
             try {
                 val result = AsteroidApi.retrofitService.getAsteroids()
                 Timber.i(result)
