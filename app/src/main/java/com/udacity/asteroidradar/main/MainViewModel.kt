@@ -22,11 +22,10 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
 
 
     private val database = getDatabase(application)
-    private val videosRepository = AsteroidsRepo(database)
+    private val asteroidRepository = AsteroidsRepo(database)
 
-    private var _asteroids = MutableLiveData<List<Asteroid>>()
-    val asteroids : LiveData<List<Asteroid>>
-        get() = _asteroids
+
+    val asteroids = asteroidRepository.asteroids
 
     private var _pictureOfDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay : LiveData<PictureOfDay>
@@ -45,23 +44,8 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            try {
-                var pictureOfDay = AsteroidApi.retrofitService.getPictureOfDay(Constants.API_KEY)
-                Timber.i(pictureOfDay.url)
-                // pictureOfDay.url ="https://apod.nasa.gov/apod/image/2312/BigDipperMt2_Cullen_1365.jpg"
-                _pictureOfDay.value = pictureOfDay
-
-
-                val result = AsteroidApi.retrofitService.getAsteroids("2023-12-28","2023-12-27","hOyEUcCIgIKCn7j49izOotiMY2vWYpp8kLO5bNiI")
-                Timber.i(result)
-                _asteroids.value = parseAsteroidsJsonResult(JSONObject(result))
-                Timber.i("Size:${(_asteroids.value as ArrayList<Asteroid>).size}")
-                if(asteroids.value?.isNotEmpty() == true){
-                    Timber.i(asteroids.value!![0].codename)
-                }
-            }catch (e: Exception){
-                Timber.e(e)
-            }
+            asteroidRepository.refreshAsteroids()
+            _pictureOfDay.value = asteroidRepository.refreshPictureOfTheDay()
         }
 
     }

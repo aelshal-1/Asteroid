@@ -13,13 +13,13 @@ import com.udacity.asteroidradar.Asteroid
 
 @Dao
 interface AsteroidDao{
-    @Query("select * from asteroiddatabase")
-    fun getAsteroid():LiveData<List<AsteroidDatabase>>
+    @Query("select * from  asteroid")
+    fun getAsteroid():LiveData<List<Asteroid>>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg asteroid: AsteroidDatabase)
+    fun insertAll(vararg asteroid: Asteroid)
 }
 
-@Database(entities = [AsteroidDatabase::class], version = 1)
+@Database(entities = [Asteroid::class], version = 1)
 abstract class AsteroidsDatabase : RoomDatabase() {
     abstract val asteroidDao: AsteroidDao
 }

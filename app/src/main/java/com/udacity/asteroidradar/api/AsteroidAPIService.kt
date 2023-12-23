@@ -23,10 +23,15 @@ interface AsteroidAPIService {
     @GET("neo/rest/v1/feed")
     suspend fun getAsteroids(@Query("start_date") startDate:String,
                              @Query("end_date") endDate:String,
-                             @Query("api_key") apiKey:String) :String
+                             @Query("api_key") apiKey:String = Constants.API_KEY) :String
+
+    @GET("neo/rest/v1/feed")
+    suspend fun getAsteroidsList(@Query("start_date") startDate:String,
+                             @Query("end_date") endDate:String,
+                             @Query("api_key") apiKey:String = Constants.API_KEY) :String
 
     @GET("planetary/apod")
-    suspend fun getPictureOfDay(@Query("api_key") apiKey: String) : PictureOfDay
+    suspend fun getPictureOfDay(@Query("api_key") apiKey: String = Constants.API_KEY) : PictureOfDay
 }
 
 object AsteroidApi{
