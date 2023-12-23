@@ -32,9 +32,7 @@ class AndroidApplication :Application() {
             .setRequiresBatteryNotLow(true)
             .setRequiresCharging(true)
             .apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setRequiresDeviceIdle(true)
-                }
+                setRequiresDeviceIdle(true)
             }.build()
         val repeatingRequest = PeriodicWorkRequestBuilder<RefreshDataWork>(1, TimeUnit.DAYS)
             .setConstraints(constraints)

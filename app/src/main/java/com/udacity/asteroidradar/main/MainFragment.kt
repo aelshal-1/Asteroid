@@ -55,6 +55,11 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.show_week -> viewModel.onFilterChanged(Filter.WEEK)
+            R.id.show_today -> viewModel.onFilterChanged(Filter.TODAY)
+            else -> viewModel.onFilterChanged(Filter.SAVED)
+        }
         return true
     }
 

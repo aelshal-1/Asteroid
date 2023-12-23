@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
 
+enum class Filter{WEEK, TODAY, SAVED}
 class MainViewModel (application: Application): AndroidViewModel(application) {
 
 
@@ -25,7 +27,14 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
     private val asteroidRepository = AsteroidsRepo(database)
 
 
-    val asteroids = asteroidRepository.asteroids
+    private val _filter = MutableLiveData<Filter>(Filter.SAVED)
+    val asteroids = _filter.switchMap {
+        when(it){
+            Filter.WEEK-> asteroidRepository.asteroidsWeek
+            Filter.TODAY->asteroidRepository.asteroidsToday
+            else -> asteroidRepository.asteroids
+        }
+    }
 
     private var _pictureOfDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay : LiveData<PictureOfDay>
@@ -42,6 +51,9 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
         _navigateToAsteroidDetails.value=null
     }
 
+    fun onFilterChanged(filter: Filter){
+        _filter.value = filter
+    }
     init {
         viewModelScope.launch {
             asteroidRepository.refreshAsteroids()

@@ -5,6 +5,7 @@ import com.udacity.asteroidradar.Constants
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Exchanger
 import kotlin.collections.ArrayList
 
 fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
@@ -21,7 +22,13 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
                 val asteroidJson = dateAsteroidJsonArray.getJSONObject(i)
                 val id = asteroidJson.getLong("id")
                 val codename = asteroidJson.getString("name")
-                val absoluteMagnitude = asteroidJson.getDouble("absolute_magnitude_h")
+                var absoluteMagnitude =0.0
+                absoluteMagnitude = try {
+                    asteroidJson.getDouble("absolute_magnitude_h")
+                }catch (e:Exception){
+                    0.0
+                }
+
                 val estimatedDiameter = asteroidJson.getJSONObject("estimated_diameter")
                     .getJSONObject("kilometers").getDouble("estimated_diameter_max")
 

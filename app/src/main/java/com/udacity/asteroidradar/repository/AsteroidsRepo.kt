@@ -23,9 +23,21 @@ import java.time.format.DateTimeFormatter
 class AsteroidsRepo(private val database: AsteroidsDatabase) {
 
 
+    val today = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
+    val nextWeek = LocalDateTime.now().plusWeeks(1).format(DateTimeFormatter.ISO_DATE)
 
     val asteroids :LiveData<List<Asteroid>> =
         Transformations.map(database.asteroidDao.getAsteroid()){
+            it.asDomainModel()
+        }
+
+    val asteroidsToday :LiveData<List<Asteroid>> =
+        Transformations.map(database.asteroidDao.getAsteroidToday(today)){
+            it.asDomainModel()
+        }
+
+    val asteroidsWeek :LiveData<List<Asteroid>> =
+        Transformations.map(database.asteroidDao.getAsteroidWeek(today,nextWeek)){
             it.asDomainModel()
         }
 
@@ -33,12 +45,11 @@ class AsteroidsRepo(private val database: AsteroidsDatabase) {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun refreshAsteroids(){
         withContext(Dispatchers.IO){
-            val today = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
-            val nextWeek = LocalDateTime.now().plusWeeks(1).format(DateTimeFormatter.ISO_DATE)
+
             Timber.i("today: ${today}")
             Timber.i("next week: ${nextWeek}")
             try {
-                val result = AsteroidApi.retrofitService.getAsteroids(today,nextWeek)
+                val result = AsteroidApi.retrofitService.getAsteroids()
                 Timber.i(result)
                 val asteroidList = parseAsteroidsJsonResult(JSONObject(result))
                 database.asteroidDao.insertAll(*asteroidList.asDatabaseModel())
