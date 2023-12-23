@@ -32,6 +32,17 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
     val pictureOfDay : LiveData<PictureOfDay>
         get() = _pictureOfDay
 
+    private val _navigateToAsteroidDetails = MutableLiveData<Asteroid?>()
+    val navigateToAsteroidDetails
+        get() = _navigateToAsteroidDetails
+    fun onAsteroidClicked(asteroid:Asteroid){
+        _navigateToAsteroidDetails.value = asteroid
+    }
+
+    fun onAsteroidDetailsNavigated(){
+        _navigateToAsteroidDetails.value=null
+    }
+
     init {
         viewModelScope.launch {
             try {
