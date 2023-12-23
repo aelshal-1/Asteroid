@@ -17,12 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.Date
+
 
 
 class AsteroidsRepo(private val database: AsteroidsDatabase) {
@@ -62,9 +57,22 @@ class AsteroidsRepo(private val database: AsteroidsDatabase) {
     suspend fun refreshPictureOfTheDay(): PictureOfDay{
         lateinit var pictureOfDay: PictureOfDay
         withContext(Dispatchers.IO){
+            try {
             pictureOfDay = AsteroidApi.retrofitService.getPictureOfDay()
             Timber.i(pictureOfDay.url)
+            }catch (e: Exception){
+                Timber.e(e.message)
+                pictureOfDay = getDefaultPictureOfDay()
+            }
         }
         return pictureOfDay
+    }
+
+    private fun getDefaultPictureOfDay(): PictureOfDay {
+        return PictureOfDay(
+            title = "Default Title",
+            url = "https://example.com/default-image.jpg",
+            mediaType ="video"
+        )
     }
 }
