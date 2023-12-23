@@ -8,3 +8,5 @@ data class Asteroid(val id: Long, val codename: String, val closeApproachDate: S
                     val absoluteMagnitude: Double, val estimatedDiameter: Double,
                     val relativeVelocity: Double, val distanceFromEarth: Double,
                     val isPotentiallyHazardous: Boolean) : Parcelable
+
+
