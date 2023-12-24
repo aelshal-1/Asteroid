@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.udacity.asteroidradar"
-        minSdkVersion 24
+        minSdkVersion 31
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -59,8 +59,8 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:$version_moshi"
 
     // Navigation
-    implementation "androidx.navigation:navigation-fragment-ktx:$version_navigation"
-    implementation "androidx.navigation:navigation-ui-ktx:$version_navigation"
+        implementation "androidx.navigation:navigation-fragment-ktx:$version_navigation"
+        implementation "androidx.navigation:navigation-ui-ktx:$version_navigation"
 
     // Room database
     implementation "androidx.room:room-runtime:$version_room"
